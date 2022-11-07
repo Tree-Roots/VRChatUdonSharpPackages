@@ -42,4 +42,4 @@ jobs:
           git add .
           git commit -m "Update UdonSharp to ${{ steps.updated_version.outputs.version }}"
           git tag -a ${{ steps.updated_version.outputs.version }} -m "Update UdonSharp to ${{ steps.updated_version.outputs.version }}"
-          git push origin main
+          git push --follow-tags
