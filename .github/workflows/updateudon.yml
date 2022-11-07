@@ -1,0 +1,33 @@
+# 每天早上8点从 VCC源 更新 UdonSharp
+name: Update UdonSharp from VCC
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  update:
+    name: Update-VCC-UdonSharp
+    runs-on: ubuntu-latest
+    steps:
+      # 加载仓库
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      # povershell
+      # 从 UpdateCheck/version.txt 读取当前版本到变量
+      - name: Get current version
+        id: current_version
+        run: echo "::set-output name=version::$(cat UpdateCheck/version.txt)"
+      # 运行仓库里 UpdateCheck 文件夹下的 src/main.ts
+      - name: Update UdonSharp
+        run: |
+          ./UpdateCheck
+          deno run --allow-read --allow-write --allow-net --allow-env --allow-run --unstable src/main.ts
