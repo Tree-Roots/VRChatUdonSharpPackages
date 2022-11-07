@@ -21,7 +21,6 @@ jobs:
         uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      # povershell
       # 从 UpdateCheck/version.txt 读取当前版本到变量
       - name: Get current version
         id: current_version
@@ -31,3 +30,16 @@ jobs:
         run: |
           cd UpdateCheck
           deno run --allow-read --allow-write --allow-net --allow-env --allow-run --unstable src/main.ts
+      # 从 UpdateCheck/version.txt 读取更新后的版本到变量进行比较
+      - name: Get updated version
+        id: updated_version
+        run: echo "::set-output name=version::$(cat UpdateCheck/version.txt)"
+      # 比较版本，如果不一样则提交
+      - name: Commit changes
+        if: steps.current_version.outputs.version != steps.updated_version.outputs.version
+        run: |
+          git config --local user.email "bot@github.com" && git config --global user.name "UpdateCheck-Bot"
+          git add .
+          git commit -m "Update UdonSharp to ${{ steps.updated_version.outputs.version }}"
+          git tag -a ${{ steps.updated_version.outputs.version }} -m "Update UdonSharp to ${{ steps.updated_version.outputs.version }}"
+          git push origin main
