@@ -29,5 +29,5 @@ jobs:
       # 运行仓库里 UpdateCheck 文件夹下的 src/main.ts
       - name: Update UdonSharp
         run: |
-          ./UpdateCheck
+          cd UpdateCheck
           deno run --allow-read --allow-write --allow-net --allow-env --allow-run --unstable src/main.ts
