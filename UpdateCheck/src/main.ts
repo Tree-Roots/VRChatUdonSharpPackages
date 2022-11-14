@@ -12,7 +12,7 @@ import {
   let udonSharpVersions = Object.keys(json.packages["com.vrchat.udonsharp"].versions)
   udonSharpVersions = (f=>f(f(udonSharpVersions,1).sort(),-1)) ((udonSharpVersions,v)=>udonSharpVersions.map(a=>a.replace(/\d+/g,n=>+n+v*100000)))
   // 排序，取最后一个
-  const udonSharpVersion = udonSharpVersions.sort().pop()
+  const udonSharpVersion = udonSharpVersions.pop()
   if (udonSharpVersion) {
     console.log(udonSharpVersion)
     // 读取 version.txt 的内容，与 udonSharpVersion 比较
