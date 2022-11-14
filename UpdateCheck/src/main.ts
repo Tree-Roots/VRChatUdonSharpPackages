@@ -9,7 +9,9 @@ import {
   const json: VRCCurated = await res.json()
   // 读取 UdonSharp 的版本号，位于 packages → com.vrchat.udonsharp → versions → x.x.x ，其中 x.x.x 为版本号，取最新的版本
   // Object.keys 选最后一个，即最新的版本
-  const udonSharpVersion = Object.keys(json.packages["com.vrchat.udonsharp"].versions).pop()
+  const udonSharpVersions = Object.keys(json.packages["com.vrchat.udonsharp"].versions)
+  // 排序，取最后一个
+  const udonSharpVersion = udonSharpVersions.sort().pop()
   if (udonSharpVersion) {
     console.log(udonSharpVersion)
     // 读取 version.txt 的内容，与 udonSharpVersion 比较
