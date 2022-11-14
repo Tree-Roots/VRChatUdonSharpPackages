@@ -36,7 +36,7 @@ import {
       const readme = await Deno.readTextFile("../README.md")
       await Deno.writeTextFile("../README.md", readme.replaceAll(versionTxt, udonSharpVersion))
       const readmez = await Deno.readTextFile("../README_zh.md")
-      await Deno.writeTextFile("../README_zh.md", readmez.replaceAll(versionTxt, resolverVersion))
+      await Deno.writeTextFile("../README_zh.md", readmez.replaceAll(versionTxt, udonSharpVersion))
     }
   }
 })()
