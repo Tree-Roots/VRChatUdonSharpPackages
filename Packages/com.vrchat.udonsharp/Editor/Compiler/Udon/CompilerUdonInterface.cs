@@ -233,10 +233,29 @@ namespace UdonSharp.Compiler.Udon
             return ExternAssemblySet.Contains(type.Assembly);
         }
 
-        public static bool IsUdonEvent(string eventName)
+        public static bool IsUdonEventName(string name)
         {
             CacheInit();
-            return _builtinEventLookup.ContainsKey(eventName);
+            
+            return _builtinEventLookup.ContainsKey(name);
+        }
+
+        public static bool IsUdonEvent(MethodSymbol method)
+        {
+            CacheInit();
+            
+            // ReSharper disable once InvokeAsExtensionMethod
+            if (_builtinEventLookup.ContainsKey(method.Name) &&
+                !method.Parameters.Any(e => e.IsByRef)) // Builtin events should never have out/ref params
+            {
+                if (method.Parameters.Length == 0 || // Avoid breaking older programs that omit the argument for these events even though they shouldn't. This also somewhat mirrors Unity's behavior as it will fire an event named OnTriggerEnter() without any parameters.
+                    Enumerable.SequenceEqual(method.Parameters.Select(e => e.Type.UdonType.SystemType), GetUdonEventArgs(method.Name).Select(e => e.Item2)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static string GetUdonEventName(string eventName)

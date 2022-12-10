@@ -8,13 +8,13 @@
 
 | 名称      | 版本  | 克隆 URL                                                                                |
 | --------- | ----- | --------------------------------------------------------------------------------------- |
-| UdonSharp | 1.1.5 | https://github.com/Tree-Roots/VRChatUdonSharpPackages.git?path=/Packages/com.vrchat.udonsharp#1.1.5 |
+| UdonSharp | 1.1.6 | https://github.com/Tree-Roots/VRChatUdonSharpPackages.git?path=/Packages/com.vrchat.udonsharp#1.1.6 |
 
 #### 安装 UdonSharp
 
 1. 打开 Package Manager
 2. 点击“+”号，再点击“Add package from git URL...”
-3. 输入“`https://github.com/Tree-Roots/VRChatUdonSharpPackages.git?path=/Packages/com.vrchat.udonsharp#1.1.5`”并回车。
+3. 输入“`https://github.com/Tree-Roots/VRChatUdonSharpPackages.git?path=/Packages/com.vrchat.udonsharp#1.1.6`”并回车。
 
 #### 特点
 
