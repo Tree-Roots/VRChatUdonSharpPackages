@@ -23,8 +23,9 @@ jobs:
       # npm 登录
       - name: Publish to UPM
         run: |
+          mv Packages/com.vrchat.udonsharp ../com.vrchat.udonsharp
+          cd ../com.vrchat.udonsharp
           npm install -g npm-cli-login
           npm set registry https://upm-packages.dev/
           npm-cli-login -u ${{ secrets.UPM_USERNAME }} -p ${{ secrets.UPM_PASSWORD }} -e ${{ secrets.UPM_EMAIL }} -r https://upm-packages.dev/
-          mv Packages/com.vrchat.udonsharp ../com.vrchat.udonsharp
           npm publish ../com.vrchat.udonsharp
