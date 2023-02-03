@@ -1,0 +1,29 @@
+# 当创建新 tag 时时，触发发布流程
+name: Publish UdonSharp
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  publish:
+    name: Publish UdonSharp
+    runs-on: ubuntu-latest
+    steps:
+      # 加载仓库
+      - name: Checkout
+        uses: actions/checkout@v3
+      # npm 安装
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      # npm 登录
+      - name: Publish to UPM
+        run: |
+          npm install -g npm-cli-login
+          npm set registry ${{ secrets.UPM_REGISTRY }}
+          npm-cli-login -u ${{ secrets.UPM_USERNAME }} -p ${{ secrets.UPM_PASSWORD }} -e ${{ secrets.UPM_EMAIL }} -r {{ secrets.UPM_REGISTRY }}
+          npm publish Packages/com.vrchat.udonsharp
