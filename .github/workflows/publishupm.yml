@@ -27,5 +27,5 @@ jobs:
           cd ../com.vrchat.udonsharp
           npm install -g npm-cli-login
           npm set registry https://upm-packages.dev/
-          npm-cli-login -u ${{ secrets.UPM_USERNAME }} -p ${{ secrets.UPM_PASSWORD }} -e ${{ secrets.UPM_EMAIL }} -r https://upm-packages.dev/
+          npm-cli-login -u ${{ secrets.UPM_USERNAME }} -p ${{ secrets.UPM_PASSWORD }} -e ${{ secrets.UPM_EMAIL }} -r https://upm-packages.dev/ --config-path .npmrc
           npm publish ../com.vrchat.udonsharp
