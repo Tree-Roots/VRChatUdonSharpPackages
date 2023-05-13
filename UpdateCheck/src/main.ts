@@ -9,37 +9,57 @@ import {
   const json: VRCCurated = await res.json()
   // 读取 UdonSharp 的版本号，位于 packages → com.vrchat.udonsharp → versions → x.x.x ，其中 x.x.x 为版本号，取最新的版本
   // Object.keys 选最后一个，即最新的版本
-  let udonSharpVersions = Object.keys(json.packages["com.vrchat.udonsharp"].versions)
-  udonSharpVersions = (f=>f(f(udonSharpVersions,1).sort(),-1)) ((udonSharpVersions,v)=>udonSharpVersions.map(a=>a.replace(/\d+/g,n=>+n+v*100000)))
-  // 排序，取最后一个
-  const udonSharpVersion = udonSharpVersions.pop()
-  if (udonSharpVersion) {
-    console.log(udonSharpVersion)
-    // 读取 version.txt 的内容，与 udonSharpVersion 比较
-    const versionTxt = await Deno.readTextFile("version.txt")
-    if (versionTxt !== udonSharpVersion) {
+  const downloadList: ["com.vrchat.udonsharp"] = ["com.vrchat.udonsharp"]
+  let hascopy = false
+  for (const packageName of downloadList) {
+    let baseVersionKeys = Object.keys(json.packages[packageName].versions)
+    baseVersionKeys = (f => f(f(baseVersionKeys, 1).sort(), -1))((baseVersionKeys: any[], v: number) => baseVersionKeys.map(a => a.replace(/\d+/g, (n: string | number) => +n + v * 100000)))
+    let baseVersion = baseVersionKeys.pop() ?? ""
+    if (baseVersion.trim() === "" || baseVersion === undefined || baseVersion === null) {
+      console.error("can't find base version")
+      // Deno.exit(1)
+      continue
+    }
+    let finded = false
+    // 如果版本号不是 x.x.x 的格式，就继续取下一个
+    while (!/^\d+\.\d+\.\d+$/.test(baseVersion)) {
+      baseVersion = baseVersionKeys.pop() ?? ""
+      if (baseVersion === "" || baseVersion === undefined || baseVersion === null) {
+        console.error("can't find base version")
+        // Deno.exit(1)
+        break
+      }
+      finded = true
+    }
+    if (!finded) continue
+    console.log(baseVersion)
+    // 读取 version.txt 的内容，与 baseVersion 比较
+    const versionTxt = await Deno.readTextFile(`${packageName}_version.txt`)
+    if (versionTxt !== baseVersion) {
       // 如果不一致，则从 url 下载最新的 zip
-      const url = json.packages["com.vrchat.udonsharp"].versions[udonSharpVersion].url
+      const version = baseVersion
+      const url = json.packages[packageName].versions[version].url
       const res = await fetch(url)
       const zip = await res.arrayBuffer()
-      // 解压到 UdonSharp 文件夹
-      await Deno.mkdir("UdonSharp", { recursive: true })
-      await Deno.writeFile("UdonSharp/UdonSharp.zip", new Uint8Array(zip))
+      // 解压到 VRChat/packageName 文件夹
+      await Deno.mkdir("VRChat", { recursive: true })
+      await Deno.writeFile(`VRChat/${packageName}.zip`, new Uint8Array(zip))
       // 解压 zip
-      await decompress("UdonSharp/UdonSharp.zip", "UdonSharp/latest")
-      // 删除 ../Packages/com.vrchat.udonsharp
-      await Deno.remove("../Packages/com.vrchat.udonsharp", { recursive: true })
-      // 将 UdonSharp/latest 移动到 ../Packages/com.vrchat.udonsharp
-      await Deno.rename("UdonSharp/latest", "../Packages/com.vrchat.udonsharp")
-      // 删除 UdonSharp 文件夹
-      await Deno.remove("UdonSharp", { recursive: true })
+      await decompress(`VRChat/${packageName}.zip`, `VRChat/${packageName}_latest`)
+      // 删除 ../Packages/packageName
+      await Deno.remove(`../Packages/${packageName}`, { recursive: true })
+      // 将 VRChat/packageName_latest 移动到 ../Packages/packageName
+      await Deno.rename(`VRChat/${packageName}_latest`, `../Packages/${packageName}`)
       // 写入 version.txt
-      await Deno.writeTextFile("version.txt", udonSharpVersion)
-      // 读取 ../README.md ，替换版本号 versionTxt 为 udonSharpVersion
-      const readme = await Deno.readTextFile("../README.md")
-      await Deno.writeTextFile("../README.md", readme.replaceAll(versionTxt, udonSharpVersion))
-      const readmez = await Deno.readTextFile("../README_zh.md")
-      await Deno.writeTextFile("../README_zh.md", readmez.replaceAll(versionTxt, udonSharpVersion))
+      await Deno.writeTextFile(`${packageName}_version.txt`, baseVersion)
+      // 删除 VRChat 文件夹
+      await Deno.remove("VRChat", { recursive: true })
+      // 读取 ../README.md ，替换版本号 versionTxt 为 baseVersion
+      const readme = hascopy ? await Deno.readTextFile("../README.md") : await Deno.readTextFile("rt.md")
+      await Deno.writeTextFile("../README.md", readme.replaceAll(`__packageName__`, `${baseVersion}`))
+      const readmez = hascopy ? await Deno.readTextFile("../README_zh.md") : await Deno.readTextFile("rtzh.md")
+      await Deno.writeTextFile("../README_zh.md", readmez.replaceAll(`__packageName__`, `${baseVersion}`))
+      hascopy = true
     }
   }
 })()
