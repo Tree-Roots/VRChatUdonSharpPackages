@@ -14,7 +14,9 @@ import {
   for (const packageName of downloadList) {
     let baseVersionKeys = Object.keys(json.packages[packageName].versions)
     baseVersionKeys = (f => f(f(baseVersionKeys, 1).sort(), -1))((baseVersionKeys: any[], v: number) => baseVersionKeys.map(a => a.replace(/\d+/g, (n: string | number) => +n + v * 100000)))
+    console.log(`baseVersionKeys.length: ${baseVersionKeys.length}`)
     let baseVersion = baseVersionKeys.pop() ?? ""
+    console.log(`baseVersion: ${baseVersion}`)
     if (baseVersion.trim() === "" || baseVersion === undefined || baseVersion === null) {
       console.error("can't find base version")
       // Deno.exit(1)
@@ -22,7 +24,9 @@ import {
     }
     let finded = false
     // 如果版本号不是 x.x.x 的格式，就继续取下一个
-    while (!/^\d+\.\d+\.\d+$/.test(baseVersion)) {
+    if (/^\d+\.\d+\.\d+$/.test(baseVersion))
+      finded = true
+    else while (!/^\d+\.\d+\.\d+$/.test(baseVersion)) {
       baseVersion = baseVersionKeys.pop() ?? ""
       if (baseVersion === "" || baseVersion === undefined || baseVersion === null) {
         console.error("can't find base version")
