@@ -5,7 +5,7 @@ import {
   decompress
 } from "https://deno.land/x/zip@v1.2.3/mod.ts";
 (async () => {
-  const res = await fetch(`https://vpm.directus.app/assets/53e9594f-1773-4bac-9c0f-81be5980bac9?download&cache=${new Date().toLocaleString()}`)
+  const res = await fetch(`https://vrchat-community.github.io/vpm-listing-curated/index.json?download&cache=${new Date().toLocaleString()}`)
   const json: VRCCurated = await res.json()
   // 读取 UdonSharp 的版本号，位于 packages → com.vrchat.udonsharp → versions → x.x.x ，其中 x.x.x 为版本号，取最新的版本
   // Object.keys 选最后一个，即最新的版本
